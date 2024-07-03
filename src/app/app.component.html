@@ -1,0 +1,13 @@
+@for (item of items(); track $index) {
+    <mat-card appearance="outlined">
+        <mat-card-header>
+        <mat-card-title>{{item.title}}</mat-card-title>
+        <mat-card-subtitle>{{item.created|date:'dd.MM.yyyy'}}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+        <p>
+            {{item.text}}
+        </p>
+    </mat-card-content>
+    </mat-card>
+}
