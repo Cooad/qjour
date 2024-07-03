@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve --host 172.26.26.4",
     "build": "ng build",
+    "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
