@@ -1,4 +1,5 @@
 <button mat-icon-button (click)="addBlock()"><mat-icon>add</mat-icon></button>
+<button mat-button (click)="startReplication()">start replication</button>
 @for (item of items(); track item.created) {
     <mat-card appearance="outlined">
         <mat-card-header>

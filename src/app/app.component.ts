@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterOutlet } from '@angular/router';
 import { BlockType, DatabaseService } from './services/database.service';
-import { from } from 'rxjs';
+import { from, merge } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
 import * as uuid from 'uuid';
 
@@ -37,5 +37,16 @@ export class AppComponent {
     };
     const blocks = await this.databaseService.blocks;
     blocks.insert(newBlock);
+  }
+
+  async startReplication(){
+    const repilcationState = await this.databaseService.startRepication();
+    merge(
+      repilcationState.received$.pipe(map(evt => ({type: 'received',evt}))),
+      repilcationState.sent$.pipe(map(evt => ({type: 'sent',evt}))),
+      repilcationState.error$.pipe(map(evt => ({type: 'error',evt}))),
+      repilcationState.canceled$.pipe(map(evt => ({type: 'canceled',evt}))),
+      repilcationState.active$.pipe(map(evt => ({type: 'active',evt})))
+    ).subscribe(console.log);
   }
 }

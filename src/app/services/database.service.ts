@@ -1,8 +1,10 @@
 import { Injectable } from "@angular/core";
-import { ExtractDocumentTypeFromTypedRxJsonSchema, RxCollection, RxDatabase, RxDatabaseBase, RxJsonSchema, addRxPlugin, createRxDatabase, toTypedRxJsonSchema } from 'rxdb';
+import { ExtractDocumentTypeFromTypedRxJsonSchema, RxCollection, RxJsonSchema, addRxPlugin, createRxDatabase, toTypedRxJsonSchema } from 'rxdb';
 import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
+import { replicateCouchDB, getFetchWithCouchDBAuthorization } from 'rxdb/plugins/replication-couchdb';
+import { RxDBLeaderElectionPlugin } from 'rxdb/plugins/leader-election';
 
 const schamaLiteral = {
     version: 0,
@@ -43,7 +45,8 @@ export class DatabaseService {
 
     private async createBlocksCollection(): Promise<RxCollection<BlockType>> {
         addRxPlugin(RxDBDevModePlugin);
-        addRxPlugin(RxDBQueryBuilderPlugin)
+        addRxPlugin(RxDBQueryBuilderPlugin);
+        addRxPlugin(RxDBLeaderElectionPlugin);
         const db = await createRxDatabase<DatabaseCollections>({
             name: 'blocks',
             storage: getRxStorageDexie()
@@ -54,5 +57,18 @@ export class DatabaseService {
             }
         });
         return que.blocks;
+    }
+
+    public async startRepication(){
+        const blocksCollection = await this.blocks;
+        const replicationState = replicateCouchDB({
+            replicationIdentifier: 'first-test',
+            collection: blocksCollection,
+            url: '',
+            pull:{},
+            push:{},
+            fetch: getFetchWithCouchDBAuthorization('','')
+        });
+        return replicationState;
     }
 }
