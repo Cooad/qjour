@@ -1,40 +1,21 @@
-import { Inject, Injectable, OnDestroy, OnInit, inject, isDevMode } from "@angular/core";
-import { ExtractDocumentTypeFromTypedRxJsonSchema, RxCollection, RxDatabase, RxJsonSchema, addRxPlugin, createRxDatabase, toTypedRxJsonSchema } from 'rxdb';
+import { Inject, Injectable, isDevMode } from "@angular/core";
+import { RxCollection, RxDatabase, RxStorage, addRxPlugin, createRxDatabase } from 'rxdb';
 import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
-import { replicateCouchDB, getFetchWithCouchDBAuthorization } from 'rxdb/plugins/replication-couchdb';
 import { RxDBLeaderElectionPlugin } from 'rxdb/plugins/leader-election';
+import { wrappedKeyCompressionStorage } from 'rxdb/plugins/key-compression';
+import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
 import { APP_SETTINGS, AppSettings } from "../../appsettings";
+import { HappenedType, happenedTypeSchema } from "../models/happenedType";
+import { Happened, happenedSchema } from "../models/happened";
 
-const schamaLiteral = {
-    version: 0,
-    primaryKey: 'id',
-    type: 'object',
-    properties: {
-        id: {
-            type: 'string',
-            maxLength: 100
-        },
-        title: {
-            type: 'string'
-        },
-        text: {
-            type: 'string'
-        },
-        created: {
-            type: "integer"
-        }
-    },
-    required: ['id']
-} as const;
-const schemaTyped = toTypedRxJsonSchema(schamaLiteral);
-export type BlockType = ExtractDocumentTypeFromTypedRxJsonSchema<typeof schemaTyped>;
-export const blockSchema: RxJsonSchema<BlockType> = schamaLiteral;
+type HappenedTypeCollection = RxCollection<HappenedType>;
+type HappenedCollection = RxCollection<Happened>;
 
-type BlocksCollection = RxCollection<BlockType>;
 type DatabaseCollections = {
-    blocks: BlocksCollection
+    happened_types: HappenedTypeCollection,
+    happened: HappenedCollection
 };
 
 export async function initDatabase(settings: AppSettings): Promise<void> {
@@ -43,13 +24,25 @@ export async function initDatabase(settings: AppSettings): Promise<void> {
     addRxPlugin(RxDBQueryBuilderPlugin);
     addRxPlugin(RxDBLeaderElectionPlugin);
 
-    const db = await createRxDatabase<DatabaseCollections>({
-        name: 'blocks',
+    let storage: RxStorage<any, any> = wrappedKeyCompressionStorage({
         storage: getRxStorageDexie()
+    })
+    if (isDevMode())
+        storage = wrappedValidateAjvStorage({
+            storage: storage
+        });
+
+    const db = await createRxDatabase<DatabaseCollections>({
+        name: 'happened',
+        storage: storage
     });
+
     await db.addCollections({
-        blocks: {
-            schema: blockSchema
+        happened: {
+            schema: happenedSchema
+        },
+        happened_types: {
+            schema: happenedTypeSchema
         }
     });
 
@@ -64,23 +57,23 @@ let DB_INSTANCE: RxDatabase<DatabaseCollections>;
 export class DatabaseService {
 
     public db = DB_INSTANCE;
-    public replicationState;
+    //public replicationState;
 
     constructor(@Inject(APP_SETTINGS) settings: AppSettings) {
-        if (settings.couchdb && settings.couchdb.url) {
-            const fetchMethod = settings.couchdb.username && settings.couchdb.password
-                ? getFetchWithCouchDBAuthorization(settings.couchdb.username, settings.couchdb.password)
-                : undefined;
-            const blocksCollection = this.db.blocks;
-            this.replicationState = replicateCouchDB({
-                replicationIdentifier: 'blocks-replication',
-                collection: blocksCollection,
-                url: `${settings.couchdb.url}/${blocksCollection.name}/`,
-                fetch: fetchMethod,
-                pull: {},
-                push: {},
-                live:true
-            });
-        }
+        // if (settings.couchdb && settings.couchdb.url) {
+        //     const fetchMethod = settings.couchdb.username && settings.couchdb.password
+        //         ? getFetchWithCouchDBAuthorization(settings.couchdb.username, settings.couchdb.password)
+        //         : undefined;
+        //     const blocksCollection = this.db.blocks;
+        //     this.replicationState = replicateCouchDB({
+        //         replicationIdentifier: 'blocks-replication',
+        //         collection: blocksCollection,
+        //         url: `${settings.couchdb.url}/${blocksCollection.name}/`,
+        //         fetch: fetchMethod,
+        //         pull: {},
+        //         push: {},
+        //         live: true
+        //     });
+        // }
     }
 }
