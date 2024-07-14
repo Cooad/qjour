@@ -7,8 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterOutlet } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DatabaseService } from './services/database/database.service';
-import { BehaviorSubject, merge, Subject, Subscription } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { merge, Subject, Subscription } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { UpdateAvailableComponent } from './components/update-available/update-available.component';
 

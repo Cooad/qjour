@@ -32,11 +32,7 @@
       "updateMode": "prefetch",
       "resources": {
         "urls": [
-          "https://fonts.googleapis.com/",
-          "https://fonts.gstatic.com/"
-        ],
-        "files": [
-          "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
+          "https://fonts.(googleapis|gstatic).com/**/*.(otf|ttf|woff|woff2)"
         ]
       }
     }
