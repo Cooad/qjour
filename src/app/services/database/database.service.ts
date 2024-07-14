@@ -1,14 +1,9 @@
-import { Inject, Injectable, isDevMode } from "@angular/core";
-import { RxCollection, RxDatabase, RxStorage, addRxPlugin, createRxDatabase } from 'rxdb';
-import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
-import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
-import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
-import { RxDBLeaderElectionPlugin } from 'rxdb/plugins/leader-election';
-import { wrappedKeyCompressionStorage } from 'rxdb/plugins/key-compression';
-import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
-import { APP_SETTINGS, AppSettings } from "../../appsettings";
-import { HappenedType, happenedTypeSchema } from "../models/happenedType";
-import { Happened, happenedSchema } from "../models/happened";
+import { Inject, Injectable } from "@angular/core";
+import { RxCollection, RxDatabase, createRxDatabase } from 'rxdb';
+import { APP_SETTINGS, AppSettings } from "../../../appsettings";
+import { HappenedType, happenedTypeSchema } from "../../models/happenedType";
+import { Happened, happenedSchema } from "../../models/happened";
+import { addPlugins, getStorage } from "./database-env";
 
 type HappenedTypeCollection = RxCollection<HappenedType>;
 type HappenedCollection = RxCollection<Happened>;
@@ -19,22 +14,11 @@ type DatabaseCollections = {
 };
 
 export async function initDatabase(settings: AppSettings): Promise<void> {
-    if (isDevMode())
-        addRxPlugin(RxDBDevModePlugin);
-    addRxPlugin(RxDBQueryBuilderPlugin);
-    addRxPlugin(RxDBLeaderElectionPlugin);
-
-    let storage: RxStorage<any, any> = wrappedKeyCompressionStorage({
-        storage: getRxStorageDexie()
-    })
-    if (isDevMode())
-        storage = wrappedValidateAjvStorage({
-            storage: storage
-        });
+    addPlugins();
 
     const db = await createRxDatabase<DatabaseCollections>({
         name: 'happened',
-        storage: storage
+        storage: getStorage()
     });
 
     await db.addCollections({

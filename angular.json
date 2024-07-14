@@ -57,7 +57,11 @@
               "@angular/material/prebuilt-themes/rose-red.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "fileReplacements": [{
+              "replace": "src/app/services/database/database-env.ts",
+              "with": "src/app/services/database/database-env.production.ts"
+            }]
           },
           "configurations": {
             "production": {
