@@ -7,8 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterOutlet } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DatabaseService } from './services/database.service';
-import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { BehaviorSubject, merge, Subject, Subscription } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { UpdateAvailableComponent } from './components/update-available/update-available.component';
 
@@ -26,14 +26,19 @@ export class AppComponent implements OnDestroy {
   happenedTypes = toSignal(this.happenedTypeQuery.$, { initialValue: [] });
 
   updatesSub: Subscription | null;
+  testSnackbar = new Subject<void>();
 
   constructor(private databaseService: DatabaseService, updates: SwUpdate, matSnackBar: MatSnackBar) {
-
-    this.updatesSub = updates.versionUpdates.pipe(filter((evt): evt is VersionReadyEvent => evt.type === 'VERSION_READY'))
-      .subscribe((evt) => {
-        console.log(evt);
-        matSnackBar.openFromComponent(UpdateAvailableComponent);
-      });
+    this.updatesSub = merge(this.testSnackbar,
+      updates.versionUpdates.pipe(filter((evt): evt is VersionReadyEvent => evt.type === 'VERSION_READY'))
+    ).pipe(switchMap(() => {
+      const ref = matSnackBar.openFromComponent(UpdateAvailableComponent);
+      return ref.afterDismissed();
+    }))
+    .subscribe(x => {
+      if (x.dismissedByAction)
+        location.reload();
+    });
   }
 
   ngOnDestroy(): void {

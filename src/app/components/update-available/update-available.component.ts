@@ -8,7 +8,7 @@ import { MatSnackBarAction, MatSnackBarActions, MatSnackBarLabel, MatSnackBarRef
     <span matSnackBarLabel>Update available</span>
     <span matSnackBarActions>
       <button mat-button matSnackBarAction (click)="snackBarRef.dismiss()">Dismiss</button>
-      <button mat-button matSnackBarAction (click)="reload()">Reload</button>
+      <button mat-button matSnackBarAction (click)="snackBarRef.dismissWithAction()">Reload</button>
     </span>
   `,
   imports: [MatButtonModule, MatSnackBarLabel, MatSnackBarActions, MatSnackBarAction],
@@ -19,9 +19,5 @@ import { MatSnackBarAction, MatSnackBarActions, MatSnackBarLabel, MatSnackBarRef
   `
 })
 export class UpdateAvailableComponent {
-  snackBarRef = inject(MatSnackBarRef)
-
-  reload() {
-    location.reload();
-  }
+  snackBarRef = inject(MatSnackBarRef);
 }
