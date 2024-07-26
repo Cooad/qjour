@@ -10,7 +10,6 @@
           "/favicon.ico",
           "/index.html",
           "/manifest.webmanifest",
-          "/appsettings.json",
           "/*.css",
           "/*.js"
         ]
@@ -34,6 +33,20 @@
         "urls": [
           "https://fonts.(googleapis|gstatic).com/**/*.(otf|ttf|woff|woff2)"
         ]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "AppSettings",
+      "urls": [
+        "/appsettings.json"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "timeout": "100u",
+        "maxSize": 100,
+        "maxAge": "365d"
       }
     }
   ]
