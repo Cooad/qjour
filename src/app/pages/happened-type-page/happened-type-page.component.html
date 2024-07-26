@@ -1,0 +1,10 @@
+<button mat-button (click)="addType()">Add type</button>
+            <div class="flex gap-2">
+                <div class="flex flex-col gap-2">
+                    <h3>Available types</h3>
+                    @for (type of happenedTypes(); track type.id) {
+                    {{ type.title }} <br />
+                    }
+                </div>
+                
+            </div>
