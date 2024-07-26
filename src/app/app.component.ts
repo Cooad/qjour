@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterOutlet } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DatabaseService } from './services/database/database.service';
-import { merge, of, Subject, Subscription, lastValueFrom } from 'rxjs';
+import { merge, of, Subscription, lastValueFrom } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { UpdateAvailableComponent } from './components/update-available/update-available.component';
@@ -17,11 +17,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddTypeComponent } from './components/add-type/add-type.component';
 import { HappenedCardComponent } from './components/happened-card/happened-card.component';
 import { Happened } from './models/happened';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatCardModule, CommonModule, MatButtonModule, MatIconModule, HappenedCardComponent],
+  imports: [RouterOutlet, MatCardModule, CommonModule, MatButtonModule, MatIconModule, HappenedCardComponent, MatSidenavModule, MatToolbarModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -35,8 +38,15 @@ export class AppComponent implements OnDestroy {
   happeneds = toSignal(this.happenedsQuery.$, { initialValue: [] });
 
   private updatesSub: Subscription | null;
+  mobileQuery: MediaQueryList;
+  private _mobileQueryListener: () => void;
 
-  constructor(private databaseService: DatabaseService, updates: SwUpdate, matSnackBar: MatSnackBar, private matDialog: MatDialog) {
+
+  constructor(private databaseService: DatabaseService, private matDialog: MatDialog, updates: SwUpdate, matSnackBar: MatSnackBar, changeDetectorRef: ChangeDetectorRef, media: MediaMatcher) {
+    this.mobileQuery = media.matchMedia('(max-width: 600px)');
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addEventListener('change', this._mobileQueryListener);
+
     this.updatesSub = merge(
       updates.versionUpdates.pipe(
         filter((evt): evt is VersionReadyEvent => evt.type === 'VERSION_READY')),
@@ -85,5 +95,6 @@ export class AppComponent implements OnDestroy {
       this.updatesSub.unsubscribe();
       this.updatesSub = null;
     }
+    this.mobileQuery.removeEventListener('change', this._mobileQueryListener);
   }
 }

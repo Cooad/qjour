@@ -1,5 +1,5 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideNoopAnimations, provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app/app.routes';
@@ -13,7 +13,7 @@ fetch('appsettings.json')
   .catch<AppSettings>(error => ({}))
   .then(settings => bootstrapApplication(AppComponent, {
     providers: [
-      provideNoopAnimations(),
+      provideAnimations(),
       provideRouter(routes),
       provideServiceWorker('ngsw-worker.js', {
         enabled: !isDevMode(),

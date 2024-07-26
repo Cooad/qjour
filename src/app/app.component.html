@@ -1,19 +1,35 @@
 <!--<button mat-icon-button ><mat-icon>add</mat-icon></button>-->
-<button mat-button (click)="addType()">Add type</button>
-@for(happenedType of happenedTypes(); track happenedType.id){
-<button mat-button (click)="addHappened(happenedType.id)">Add {{happenedType.title}}</button>
-}
-<div class="flex gap-2">
-    <div class="flex flex-col gap-2">
-        <h3>Available types</h3>
-        @for (type of happenedTypes(); track type.id) {
-        {{ type.title }} <br />
-        }
-    </div>
-    <div class="flex flex-col gap-2">
-        <h3>Timeline</h3>
-        @for (happened of happeneds(); track happened.id){
-        <app-happened-card [happened]="happened" />
-        }
-    </div>
+<div class="flex flex-col absolute top-0 right-0 left-0 bottom-0">
+    <mat-toolbar [class.fixed]="mobileQuery.matches" class="z-10">
+        <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
+        <h1>QJour</h1>
+    </mat-toolbar>
+
+    <mat-sidenav-container class="grow" [class.shrink]="mobileQuery.matches"
+        [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+        <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches"
+            fixedTopGap="56">
+            <p>test</p>
+        </mat-sidenav>
+        <mat-sidenav-content>
+            <button mat-button (click)="addType()">Add type</button>
+            @for(happenedType of happenedTypes(); track happenedType.id){
+            <button mat-button (click)="addHappened(happenedType.id)">Add {{happenedType.title}}</button>
+            }
+            <div class="flex gap-2">
+                <div class="flex flex-col gap-2">
+                    <h3>Available types</h3>
+                    @for (type of happenedTypes(); track type.id) {
+                    {{ type.title }} <br />
+                    }
+                </div>
+                <div class="flex flex-col gap-2">
+                    <h3>Timeline</h3>
+                    @for (happened of happeneds(); track happened.id){
+                    <app-happened-card [happened]="happened" />
+                    }
+                </div>
+            </div>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
 </div>
