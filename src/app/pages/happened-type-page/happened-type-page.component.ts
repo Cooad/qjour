@@ -3,7 +3,6 @@ import { toSignal } from "@angular/core/rxjs-interop";
 import { DatabaseService } from "../../services/database/database.service";
 import { MatDialog } from "@angular/material/dialog";
 import { lastValueFrom } from "rxjs";
-import { AddTypeComponent } from "../../components/add-type/add-type.component";
 import { HappenedType } from "../../models/happened-type";
 import { v4 as uuid } from 'uuid';
 import { MatIconModule } from "@angular/material/icon";
@@ -31,7 +30,9 @@ export class HappenedTypePageComponent {
       createdAt: new Date().getTime(),
       modifiedAt: new Date().getTime()
     };
-    const dialogRef = this.matDialog.open(AddTypeComponent, { data: newType });
+    const addTypeComponent = await import("../../components/add-type/add-type.component").then(x => x.AddTypeComponent);
+    const dialogRef = this.matDialog.open(addTypeComponent, { data: newType });
+    //const dialogRef = this.matDialog.open(AddTypeComponent, { data: newType });
     const result = await lastValueFrom(dialogRef.afterClosed())
     if (result === undefined)
       return;
