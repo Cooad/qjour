@@ -7,11 +7,13 @@ import { DatabaseService } from "../../services/database/database.service";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { v4 as uuid } from 'uuid';
 import { Happened } from "../../models/happened";
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   standalone: true,
   templateUrl: './happened-page.component.html',
-  imports: [CommonModule, MatButtonModule, MatIconModule, HappenedCardComponent],
+  styleUrl: './happened-page.component.scss',
+  imports: [CommonModule, MatButtonModule, MatIconModule, HappenedCardComponent, MatDividerModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HappenedPageComponent {
