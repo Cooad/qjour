@@ -6,9 +6,10 @@ import { HappenedCardComponent } from "../../components/happened-card/happened-c
 import { DatabaseService } from "../../services/database/database.service";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { v4 as uuid } from 'uuid';
-import { Happened } from "../../models/happened";
+import { Happened, HappenedDocument } from "../../models/happened";
 import { MatDividerModule } from '@angular/material/divider';
 import { RxDocument } from "rxdb";
+import { map, tap } from "rxjs/operators";
 
 @Component({
   standalone: true,
@@ -21,7 +22,30 @@ export class TimelinePageComponent {
 
   private databaseService = inject(DatabaseService);
   private happenedsQuery = this.databaseService.db.happened.find().sort({ happenedAt: 'desc' });
-  happeneds = toSignal(this.happenedsQuery.$, { initialValue: [] });
+  happenedsByDay = toSignal(
+    this.happenedsQuery.$.pipe(
+      tap(console.log),
+      map(happens => {
+        //elements are sorted
+        const result = [];
+        let currentDateString: string = "";
+        let dayResult: { key: string, happeneds: HappenedDocument[] } | null = null;
+        for (let happen of happens) {
+          var date = new Date(happen.happenedAt);
+          const dateString = date.toLocaleDateString();
+          if (currentDateString !== dateString) {
+            dayResult = { key: dateString, happeneds: [happen] };
+            result.push(dayResult);
+            currentDateString = dateString;
+            continue;
+          }
+          dayResult?.happeneds.push(happen);
+        }
+        return result;
+      }),
+      tap(console.log)
+    ), { initialValue: [] }
+  );
 
   private happenedTypesQuery = this.databaseService.db.happened_types.find().sort({ title: 'asc' });
   happenedTypes = toSignal(this.happenedTypesQuery.$, { initialValue: [] });
