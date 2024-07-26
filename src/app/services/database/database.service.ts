@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
 import { RxCollection, RxDatabase, createRxDatabase } from 'rxdb';
 import { APP_SETTINGS, AppSettings } from "../../../appsettings";
-import { HappenedType, happenedTypeSchema } from "../../models/happenedType";
+import { HappenedType, happenedTypeSchema } from "../../models/happened-type";
 import { Happened, happenedSchema } from "../../models/happened";
 import { addPlugins, getStorage } from "./database-env";
 

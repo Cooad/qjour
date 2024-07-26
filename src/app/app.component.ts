@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,10 +7,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterOutlet } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DatabaseService } from './services/database/database.service';
-import { merge, Subject, Subscription } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
-import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
+import { merge, of, Subject, Subscription, lastValueFrom } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
+import { SwUpdate, UnrecoverableStateEvent, VersionReadyEvent } from '@angular/service-worker';
 import { UpdateAvailableComponent } from './components/update-available/update-available.component';
+import { v4 as uuid } from 'uuid';
+import { HappenedType } from './models/happened-type';
+import { MatDialog } from '@angular/material/dialog';
+import { AddTypeComponent } from './components/add-type/add-type.component';
 
 @Component({
   selector: 'app-root',
@@ -28,17 +32,36 @@ export class AppComponent implements OnDestroy {
   updatesSub: Subscription | null;
   testSnackbar = new Subject<void>();
 
-  constructor(private databaseService: DatabaseService, updates: SwUpdate, matSnackBar: MatSnackBar) {
+  constructor(private databaseService: DatabaseService, updates: SwUpdate, matSnackBar: MatSnackBar, private matDialog: MatDialog) {
     this.updatesSub = merge(this.testSnackbar,
-      updates.versionUpdates.pipe(filter((evt): evt is VersionReadyEvent => evt.type === 'VERSION_READY'))
-    ).pipe(switchMap(() => {
+      updates.versionUpdates.pipe(
+        filter((evt): evt is VersionReadyEvent => evt.type === 'VERSION_READY')),
+      updates.unrecoverable
+    ).pipe(switchMap((evt) => {
+      if (evt?.type === 'UNRECOVERABLE_STATE')
+        return of(true);
       const ref = matSnackBar.openFromComponent(UpdateAvailableComponent);
-      return ref.afterDismissed();
+      return ref.afterDismissed().pipe(map(x => x.dismissedByAction));
     }))
-    .subscribe(x => {
-      if (x.dismissedByAction)
-        location.reload();
-    });
+      .subscribe(shouldReload => {
+        if (shouldReload)
+          location.reload();
+      });
+  }
+
+  async addType() {
+    const newType: HappenedType = {
+      id: uuid(),
+      title: '',
+      metadataProperties: {},
+      createdAt: new Date().getTime(),
+      modifiedAt: new Date().getTime()
+    };
+    const dialogRef = this.matDialog.open(AddTypeComponent, { data: newType });
+    const result = await lastValueFrom(dialogRef.afterClosed())
+    if (result === undefined)
+      return;
+    this.databaseService.db.happened_types.insert(newType);
   }
 
   ngOnDestroy(): void {
