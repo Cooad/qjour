@@ -4,6 +4,8 @@ import { APP_SETTINGS, AppSettings } from "../../../appsettings";
 import { HappenedType, happenedTypeSchema } from "../../models/happened-type";
 import { Happened, happenedMethods, happenedSchema } from "../../models/happened";
 import { addPlugins, getStorage } from "./database-env";
+import { replicateCouchDB, getFetchWithCouchDBAuthorization } from 'rxdb/plugins/replication-couchdb';
+import { RxReplicationState } from "rxdb/plugins/replication";
 
 type HappenedTypeCollection = RxCollection<HappenedType>;
 type HappenedCollection = RxCollection<Happened, typeof happenedMethods>;
@@ -42,23 +44,30 @@ let DB_INSTANCE: RxDatabase<DatabaseCollections>;
 export class DatabaseService {
 
     public db = DB_INSTANCE;
-    //public replicationState;
+    public replicationStates: Record<string, RxReplicationState<any, any>>;
 
     constructor(@Inject(APP_SETTINGS) settings: AppSettings) {
-        // if (settings.couchdb && settings.couchdb.url) {
-        //     const fetchMethod = settings.couchdb.username && settings.couchdb.password
-        //         ? getFetchWithCouchDBAuthorization(settings.couchdb.username, settings.couchdb.password)
-        //         : undefined;
-        //     const blocksCollection = this.db.blocks;
-        //     this.replicationState = replicateCouchDB({
-        //         replicationIdentifier: 'blocks-replication',
-        //         collection: blocksCollection,
-        //         url: `${settings.couchdb.url}/${blocksCollection.name}/`,
-        //         fetch: fetchMethod,
-        //         pull: {},
-        //         push: {},
-        //         live: true
-        //     });
-        // }
+        this.replicationStates = {};
+        if (settings.couchdb && settings.couchdb.url) {
+            const fetchMethod = settings.couchdb.username && settings.couchdb.password
+                ? getFetchWithCouchDBAuthorization(settings.couchdb.username, settings.couchdb.password)
+                : undefined;
+            for (let collectionName in this.db.collections) {
+                const collection = (this.db.collections as any)[collectionName] as RxCollection;
+                let url = settings.couchdb.url + '/';
+                if (settings.couchdb.prefix)
+                    url += settings.couchdb.prefix + '_';
+                url += collectionName + '/';
+                this.replicationStates[collectionName] = replicateCouchDB({
+                    replicationIdentifier: 'blocks-replication',
+                    collection: collection,
+                    url: url,
+                    fetch: fetchMethod,
+                    pull: {},
+                    push: {},
+                    live: true
+                });
+            }
+        }
     }
 }
