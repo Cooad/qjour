@@ -1,4 +1,19 @@
 <!--<button mat-icon-button ><mat-icon>add</mat-icon></button>-->
-<button mat-button (click)="testSnackbar.next()">Test snackbar</button>
 <button mat-button (click)="addType()">Add type</button>
-<div></div>
+@for(happenedType of happenedTypes(); track happenedType.id){
+<button mat-button (click)="addHappened(happenedType.id)">Add {{happenedType.title}}</button>
+}
+<div class="flex gap-2">
+    <div class="flex flex-col gap-2">
+        <h3>Available types</h3>
+        @for (type of happenedTypes(); track type.id) {
+        {{ type.title }} <br />
+        }
+    </div>
+    <div class="flex flex-col gap-2">
+        <h3>Timeline</h3>
+        @for (happened of happeneds(); track happened.id){
+        <app-happened-card [happened]="happened" />
+        }
+    </div>
+</div>

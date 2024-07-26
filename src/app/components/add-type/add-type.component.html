@@ -1,12 +1,11 @@
 <h2 mat-dialog-title>Add type</h2>
 <mat-dialog-content>
-    <p>What's your favorite animal?</p>
     <mat-form-field>
         <mat-label>Title</mat-label>
-        <input matInput [(ngModel)]="title" />
+        <input matInput [(ngModel)]="title" cdkFocusInitial/>
     </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-button (click)="close()">Cancel</button>
-    <button mat-button [mat-dialog-close]="result()" cdkFocusInitial>Save</button>
+    <button mat-button [mat-dialog-close]="result()">Save</button>
 </mat-dialog-actions>

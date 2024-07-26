@@ -1,4 +1,6 @@
-import { RxJsonSchema } from "rxdb";
+import { RxDocument, RxJsonSchema } from "rxdb";
+import { from } from "rxjs";
+import { HappenedTypeDocument } from "./happened-type";
 
 export type Happened = {
   id: string;
@@ -8,6 +10,11 @@ export type Happened = {
   createdAt: number;
   modifiedAt: number;
 };
+
+export const happenedMethods = {
+}
+
+export type HappenedDocument = RxDocument<Happened, typeof happenedMethods>;
 
 export const happenedSchema: RxJsonSchema<Happened> = {
   title: 'happened schema',
@@ -23,6 +30,7 @@ export const happenedSchema: RxJsonSchema<Happened> = {
     },
     type: {
       type: 'string',
+      ref: 'happened_types'
     },
     metadata: {
       type: 'object',

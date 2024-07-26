@@ -2,11 +2,11 @@ import { Inject, Injectable } from "@angular/core";
 import { RxCollection, RxDatabase, createRxDatabase } from 'rxdb';
 import { APP_SETTINGS, AppSettings } from "../../../appsettings";
 import { HappenedType, happenedTypeSchema } from "../../models/happened-type";
-import { Happened, happenedSchema } from "../../models/happened";
+import { Happened, happenedMethods, happenedSchema } from "../../models/happened";
 import { addPlugins, getStorage } from "./database-env";
 
 type HappenedTypeCollection = RxCollection<HappenedType>;
-type HappenedCollection = RxCollection<Happened>;
+type HappenedCollection = RxCollection<Happened, typeof happenedMethods>;
 
 type DatabaseCollections = {
     happened_types: HappenedTypeCollection,
@@ -23,7 +23,8 @@ export async function initDatabase(settings: AppSettings): Promise<void> {
 
     await db.addCollections({
         happened: {
-            schema: happenedSchema
+            schema: happenedSchema,
+            methods: happenedMethods
         },
         happened_types: {
             schema: happenedTypeSchema
