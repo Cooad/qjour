@@ -1,4 +1,3 @@
-import { isDevMode } from "@angular/core";
 import { addRxPlugin, RxStorage } from "rxdb";
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode";
 import { wrappedKeyCompressionStorage } from "rxdb/plugins/key-compression";
@@ -14,12 +13,10 @@ export function addPlugins() {
 }
 
 export function getStorage() {
-  let storage: RxStorage<any, any> = wrappedKeyCompressionStorage({
-    storage: getRxStorageDexie()
-  })
-  if (isDevMode())
-    storage = wrappedValidateAjvStorage({
-      storage: storage
-    });
+  let storage: RxStorage<any, any> = wrappedValidateAjvStorage({
+    storage: wrappedKeyCompressionStorage({
+      storage: getRxStorageDexie()
+    })
+  });
   return storage;
 }

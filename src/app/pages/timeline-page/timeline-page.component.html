@@ -7,12 +7,14 @@
   @for (happened of happeneds(); track happened.id){
   <div class="flex flex-row gap-2 justify-center items-center">
     <p>{{happened.happenedAt | date:'short'}}</p>
-    <div class="flex flex-col items-center">
-      <mat-divider vertical="true" class="min-h-4" />
+    <div class="flex flex-col items-center self-stretch">
+      <mat-divider vertical="true" class="min-h-4 grow" />
       <div class="circle min-h-2 min-w-2"></div>
-      <mat-divider vertical="true" class="min-h-4" />
+      <mat-divider vertical="true" class="min-h-4 grow" />
     </div>
-    <app-happened-card [happened]="happened" />
+    <div class="p-2">
+      <app-happened-card [happened]="happened" (delete)="deleteHappened(happened)" />
+    </div>
   </div>
   }
 </div>
