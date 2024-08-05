@@ -2,6 +2,6 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./pages/timeline-page/timeline-page.component').then(x => x.TimelinePageComponent) },
-  { path: 'happened-types', loadComponent: () => import('./pages/happened-type-page/happened-type-page.component').then(x => x.HappenedTypePageComponent) },
+  { path: 'templates', loadComponent: () => import('./pages/templates-page/templates-page.component').then(x => x.TemplatesPageComponent) },
   { path: '*', pathMatch: 'full', redirectTo: '' }
 ];

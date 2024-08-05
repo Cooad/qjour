@@ -6,7 +6,7 @@ import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { APP_SETTINGS, AppSettings } from './appsettings';
 import { APP_INITIALIZER, isDevMode } from '@angular/core';
-import { initDatabase } from './app/services/database/database.service';
+import { initDatabase } from './app/database/database.service';
 
 fetch('appsettings.json')
   .then<Response, AppSettings>(response => response.json())

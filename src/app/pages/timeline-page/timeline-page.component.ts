@@ -3,10 +3,10 @@ import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { HappenedCardComponent } from "../../components/happened-card/happened-card.component";
-import { DatabaseService } from "../../services/database/database.service";
+import { DatabaseService } from "../../database/database.service";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { v4 as uuid } from 'uuid';
-import { Happened, HappenedDocument } from "../../models/happened";
+import { Happened, HappenedDocument } from "../../database/models/happened";
 import { MatDividerModule } from '@angular/material/divider';
 import { RxDocument } from "rxdb";
 import { map, tap } from "rxjs/operators";
@@ -24,9 +24,7 @@ export class TimelinePageComponent {
   private happenedsQuery = this.databaseService.db.happened.find().sort({ happenedAt: 'desc' });
   happenedsByDay = toSignal(
     this.happenedsQuery.$.pipe(
-      tap(console.log),
       map(happens => {
-        //elements are sorted
         const result = [];
         let currentDateString: string = "";
         let dayResult: { key: string, happeneds: HappenedDocument[] } | null = null;
@@ -42,22 +40,23 @@ export class TimelinePageComponent {
           dayResult?.happeneds.push(happen);
         }
         return result;
-      }),
-      tap(console.log)
+      })
     ), { initialValue: [] }
   );
 
-  private happenedTypesQuery = this.databaseService.db.happened_types.find().sort({ title: 'asc' });
-  happenedTypes = toSignal(this.happenedTypesQuery.$, { initialValue: [] });
+  private happenedTemplatesQuery = this.databaseService.db.happened_template.find().sort({ title: 'asc' });
+  happenedTemplates = toSignal(this.happenedTemplatesQuery.$, { initialValue: [] });
 
-  async addHappened(typeId: string) {
+  async addHappened(templateId: string) {
+    const happenedTemplate = this.happenedTemplates().find(t => t.id == templateId);
     const newHappened: Happened = {
       id: uuid(),
-      type: typeId,
-      metadata: {},
       createdAt: new Date().getTime(),
       modifiedAt: new Date().getTime(),
-      happenedAt: new Date().getTime()
+      happenedAt: new Date().getTime(),
+      title: happenedTemplate?.title ?? '',
+      metadata: happenedTemplate?.metadata ?? {},
+      type: happenedTemplate?.type ?? 'simple'
     };
     await this.databaseService.db.happened.insert(newHappened);
   }

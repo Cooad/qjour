@@ -5,11 +5,13 @@ import { RxDBLeaderElectionPlugin } from "rxdb/plugins/leader-election";
 import { RxDBQueryBuilderPlugin } from "rxdb/plugins/query-builder";
 import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
 import { wrappedValidateAjvStorage } from "rxdb/plugins/validate-ajv";
+import { RxDBMigrationSchemaPlugin } from 'rxdb/plugins/migration-schema';
 
 export function addPlugins() {
   addRxPlugin(RxDBDevModePlugin);
   addRxPlugin(RxDBQueryBuilderPlugin);
   addRxPlugin(RxDBLeaderElectionPlugin);
+  addRxPlugin(RxDBMigrationSchemaPlugin);
 }
 
 export function getStorage() {

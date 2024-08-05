@@ -59,8 +59,8 @@
             ],
             "scripts": [],
             "fileReplacements": [{
-              "replace": "src/app/services/database/database-env.ts",
-              "with": "src/app/services/database/database-env.production.ts"
+              "replace": "src/app/database/database-env.ts",
+              "with": "src/app/database/database-env.production.ts"
             }]
           },
           "configurations": {

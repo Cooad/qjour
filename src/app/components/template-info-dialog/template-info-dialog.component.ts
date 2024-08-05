@@ -3,12 +3,13 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from "@a
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from '@angular/material/input';
-import { HappenedType } from "../../models/happened-type";
+import { HappenedTemplate } from "../../database/models/happened-template";
 import { MatButtonModule } from "@angular/material/button";
+import { MatSelectModule } from "@angular/material/select";
 
 @Component({
     standalone: true,
-    templateUrl: './add-type.component.html',
+    templateUrl: './template-info-dialog.component.html',
     imports: [
         MatDialogTitle,
         MatDialogContent,
@@ -16,21 +17,22 @@ import { MatButtonModule } from "@angular/material/button";
         MatDialogClose,
         MatFormFieldModule,
         MatInputModule,
+        //MatSelectModule,
         MatButtonModule,
         FormsModule
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddTypeComponent {
+export class TemplateInfoDialogComponent {
 
-    dialogRef = inject(MatDialogRef<AddTypeComponent>);
-    data = inject<HappenedType>(MAT_DIALOG_DATA);
+    dialogRef = inject(MatDialogRef<TemplateInfoDialogComponent>);
+    data = inject<HappenedTemplate>(MAT_DIALOG_DATA);
 
     title = signal(this.data.title);
 
     result = computed(() => ({
         ...this.data,
-        title: this.title()
+        title: this.title(),
     }));
 
     close() {

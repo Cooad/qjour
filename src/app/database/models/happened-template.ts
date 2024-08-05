@@ -1,16 +1,11 @@
 import { RxDocument, RxJsonSchema } from "rxdb";
+import { Happened } from "./happened";
 
-export type HappenedType = {
-  id: string;
-  title: string;
-  metadataProperties: Record<string, "string" | "number">;
-  createdAt: number;
-  modifiedAt: number;
-};
+export type HappenedTemplate = Omit<Happened, 'happenedAt'>;
 
-export type HappenedTypeDocument = RxDocument<HappenedType>;
+export type HappenedTemplateDocument = RxDocument<HappenedTemplate>;
 
-export const happenedTypeSchema: RxJsonSchema<HappenedType> = {
+export const happenedTemplateSchema: RxJsonSchema<HappenedTemplate> = {
   title: 'happened type schema',
   description: 'describes happened type objects',
   version: 0,
@@ -25,7 +20,10 @@ export const happenedTypeSchema: RxJsonSchema<HappenedType> = {
     title: {
       type: 'string',
     },
-    metadataProperties: {
+    type: {
+      type: 'string'
+    },
+    metadata: {
       type: 'object',
     },
     createdAt: {
@@ -35,5 +33,5 @@ export const happenedTypeSchema: RxJsonSchema<HappenedType> = {
       type: 'integer'
     }
   },
-  required: ['id', 'title', 'createdAt', 'modifiedAt']
+  required: ['id', 'title', 'type', 'createdAt', 'modifiedAt']
 };

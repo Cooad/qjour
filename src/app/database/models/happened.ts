@@ -1,15 +1,24 @@
-import { RxDocument, RxJsonSchema } from "rxdb";
-import { from } from "rxjs";
-import { HappenedTypeDocument } from "./happened-type";
+import { MigrationStrategies, RxDocument, RxJsonSchema } from "rxdb";
 
-export type Happened = {
+type Base = {
   id: string;
-  type: string;
-  metadata: Record<string, any>
+  title: string;
   happenedAt: number;
   createdAt: number;
   modifiedAt: number;
-};
+}
+
+type Simple = {
+  id: string,
+  type: 'simple',
+  metadata: {
+    note?: string;
+  }
+}
+
+export type Happened = Base & Simple;
+
+export type HappenedTypes = Happened['type'];
 
 export const happenedMethods = {
 }
@@ -19,7 +28,7 @@ export type HappenedDocument = RxDocument<Happened, typeof happenedMethods>;
 export const happenedSchema: RxJsonSchema<Happened> = {
   title: 'happened schema',
   description: 'describes happened objects',
-  version: 0,
+  version: 1,
   keyCompression: true,
   primaryKey: 'id',
   type: 'object',
@@ -29,8 +38,10 @@ export const happenedSchema: RxJsonSchema<Happened> = {
       maxLength: 100
     },
     type: {
-      type: 'string',
-      ref: 'happened_types'
+      type: 'string'
+    },
+    title: {
+      type: 'string'
     },
     metadata: {
       type: 'object',
@@ -48,7 +59,12 @@ export const happenedSchema: RxJsonSchema<Happened> = {
       type: 'integer',
     }
   },
-  required: ['id', 'type', 'createdAt', 'modifiedAt', 'happenedAt'],
+  required: ['id', 'type', 'title', 'createdAt', 'modifiedAt', 'happenedAt'],
   indexes: ['happenedAt']
 };
 
+export const happenedMigrations: MigrationStrategies = {
+  1: function (oldHappened): Happened | Promise<Happened> | null {
+    return null;
+  }
+}

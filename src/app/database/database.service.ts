@@ -1,17 +1,17 @@
 import { Inject, Injectable } from "@angular/core";
 import { RxCollection, RxDatabase, createRxDatabase } from 'rxdb';
-import { APP_SETTINGS, AppSettings } from "../../../appsettings";
-import { HappenedType, happenedTypeSchema } from "../../models/happened-type";
-import { Happened, happenedMethods, happenedSchema } from "../../models/happened";
+import { APP_SETTINGS, AppSettings } from "../../appsettings";
+import { HappenedTemplate, happenedTemplateSchema } from "./models/happened-template";
+import { Happened, happenedMethods, happenedMigrations, happenedSchema } from "./models/happened";
 import { addPlugins, getStorage } from "./database-env";
 import { replicateCouchDB, getFetchWithCouchDBAuthorization } from 'rxdb/plugins/replication-couchdb';
 import { RxReplicationState } from "rxdb/plugins/replication";
 
-type HappenedTypeCollection = RxCollection<HappenedType>;
+type HappenedTemplateCollection = RxCollection<HappenedTemplate>;
 type HappenedCollection = RxCollection<Happened, typeof happenedMethods>;
 
 type DatabaseCollections = {
-    happened_types: HappenedTypeCollection,
+    happened_template: HappenedTemplateCollection,
     happened: HappenedCollection
 };
 
@@ -26,10 +26,11 @@ export async function initDatabase(settings: AppSettings): Promise<void> {
     await db.addCollections({
         happened: {
             schema: happenedSchema,
-            methods: happenedMethods
+            methods: happenedMethods,
+            migrationStrategies: happenedMigrations
         },
-        happened_types: {
-            schema: happenedTypeSchema
+        happened_template: {
+            schema: happenedTemplateSchema
         }
     });
 
