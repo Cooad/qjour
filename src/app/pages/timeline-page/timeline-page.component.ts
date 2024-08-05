@@ -1,7 +1,4 @@
-import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
 import { HappenedCardComponent } from "../../components/happened-card/happened-card.component";
 import { DatabaseService } from "../../database/database.service";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -9,13 +6,15 @@ import { v4 as uuid } from 'uuid';
 import { Happened, HappenedDocument } from "../../database/models/happened";
 import { MatDividerModule } from '@angular/material/divider';
 import { RxDocument } from "rxdb";
-import { map, tap } from "rxjs/operators";
+import { map } from "rxjs/operators";
+import { formatDate } from "@angular/common"
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
   standalone: true,
   templateUrl: './timeline-page.component.html',
   styleUrl: './timeline-page.component.scss',
-  imports: [CommonModule, MatButtonModule, MatIconModule, HappenedCardComponent, MatDividerModule],
+  imports: [MatButtonModule, MatDividerModule, HappenedCardComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimelinePageComponent {
@@ -29,8 +28,7 @@ export class TimelinePageComponent {
         let currentDateString: string = "";
         let dayResult: { key: string, happeneds: HappenedDocument[] } | null = null;
         for (let happen of happens) {
-          var date = new Date(happen.happenedAt);
-          const dateString = date.toLocaleDateString();
+          const dateString = this.toDate(happen.happenedAt);
           if (currentDateString !== dateString) {
             dayResult = { key: dateString, happeneds: [happen] };
             result.push(dayResult);
@@ -63,5 +61,13 @@ export class TimelinePageComponent {
 
   deleteHappened(happened: RxDocument<Happened>) {
     return happened.remove();
+  }
+
+  toDate(date: number) {
+    return formatDate(date, "dd.MM.yyyy", 'en-US');
+  }
+
+  toTime(date: number) {
+    return formatDate(date, "HH:mm", 'en-US');
   }
 }

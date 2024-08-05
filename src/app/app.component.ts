@@ -8,14 +8,14 @@ import { UpdateAvailableComponent } from './components/update-available/update-a
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MediaMatcher } from '@angular/cdk/layout';
+import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [MatListModule, MatButtonModule, MatIconModule, RouterOutlet, RouterLink, MatSidenavModule, MatToolbarModule],
+  imports: [MatButtonModule, MatIconModule, MatListModule, RouterOutlet, RouterLink, MatSidenavModule, MatToolbarModule],
   templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })

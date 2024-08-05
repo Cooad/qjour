@@ -4,14 +4,13 @@ import { DatabaseService } from "../../database/database.service";
 import { MatDialog } from "@angular/material/dialog";
 import { lastValueFrom } from "rxjs";
 import { v4 as uuid } from 'uuid';
-import { MatIconModule } from "@angular/material/icon";
-import { MatButtonModule } from "@angular/material/button";
 import { HappenedTemplate } from "../../database/models/happened-template";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
   standalone: true,
   templateUrl: './templates-page.component.html',
-  imports: [MatButtonModule, MatIconModule],
+  imports: [MatButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TemplatesPageComponent {

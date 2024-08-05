@@ -12,7 +12,7 @@ import { MatSnackBarAction, MatSnackBarActions, MatSnackBarLabel, MatSnackBarRef
     </span>
   `,
   imports: [MatButtonModule, MatSnackBarLabel, MatSnackBarActions, MatSnackBarAction],
-  styles:`
+  styles: `
     :host {
       display:flex
     }

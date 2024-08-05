@@ -5,7 +5,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from '@angular/material/input';
 import { HappenedTemplate } from "../../database/models/happened-template";
 import { MatButtonModule } from "@angular/material/button";
-import { MatSelectModule } from "@angular/material/select";
 
 @Component({
     standalone: true,
@@ -15,10 +14,9 @@ import { MatSelectModule } from "@angular/material/select";
         MatDialogContent,
         MatDialogActions,
         MatDialogClose,
+        MatButtonModule,
         MatFormFieldModule,
         MatInputModule,
-        //MatSelectModule,
-        MatButtonModule,
         FormsModule
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
