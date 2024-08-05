@@ -9,6 +9,8 @@ import { RxDocument } from "rxdb";
 import { map } from "rxjs/operators";
 import { formatDate } from "@angular/common"
 import { MatButtonModule } from "@angular/material/button";
+import { MatDialog } from "@angular/material/dialog";
+import { lastValueFrom } from "rxjs";
 
 @Component({
   standalone: true,
@@ -20,6 +22,8 @@ import { MatButtonModule } from "@angular/material/button";
 export class TimelinePageComponent {
 
   private databaseService = inject(DatabaseService);
+  private matDialog = inject(MatDialog);
+
   private happenedsQuery = this.databaseService.db.happened.find().sort({ happenedAt: 'desc' });
   happenedsByDay = toSignal(
     this.happenedsQuery.$.pipe(
@@ -57,6 +61,13 @@ export class TimelinePageComponent {
       type: happenedTemplate?.type ?? 'simple'
     };
     await this.databaseService.db.happened.insert(newHappened);
+  }
+
+  async editHappened(happened: RxDocument<Happened>) {
+    const happenedEditDialogComponent = await import("../../components/happened-edit-dialog/happened-edit-dialog.component").then(x => x.HappenedEditDialogComponent);
+    const dialogRef = this.matDialog.open(happenedEditDialogComponent, { data: happened._data });
+    const result = await lastValueFrom(dialogRef.afterClosed());
+    await happened.patch(result);
   }
 
   deleteHappened(happened: RxDocument<Happened>) {

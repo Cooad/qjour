@@ -15,7 +15,7 @@
       <mat-divider vertical="true" class="min-h-4 grow" />
     </div>
     <div class="p-2">
-      <app-happened-card [happened]="happened" (delete)="deleteHappened(happened)" />
+      <app-happened-card [happened]="happened" (delete)="deleteHappened(happened)" (edit)="editHappened(happened)"/>
     </div>
   </div>
   }

@@ -3,6 +3,7 @@
         <mat-panel-title>{{ happened().title }}</mat-panel-title>
     </mat-expansion-panel-header>
     <div class="flex flex-row content-end">
+        <button mat-icon-button (click)="edit.emit()"><mat-icon>edit</mat-icon></button>
         <button mat-icon-button (click)="delete.emit()"><mat-icon>delete</mat-icon></button>
     </div>
 </mat-expansion-panel>
