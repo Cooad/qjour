@@ -5,7 +5,6 @@ import { toSignal } from "@angular/core/rxjs-interop";
 import { v4 as uuid } from 'uuid';
 import { Happened, HappenedDocument } from "../../database/models/happened";
 import { MatDividerModule } from '@angular/material/divider';
-import { RxDocument } from "rxdb";
 import { map } from "rxjs/operators";
 import { formatDate } from "@angular/common"
 import { MatButtonModule } from "@angular/material/button";
@@ -73,7 +72,7 @@ export class TimelinePageComponent {
     await this.databaseService.db.happened.insert(newHappened);
   }
 
-  async editHappened(happened: RxDocument<Happened>) {
+  async editHappened(happened: HappenedDocument) {
     const happenedEditDialogComponent = await import("../../components/happened-edit-dialog/happened-edit-dialog.component").then(x => x.HappenedEditDialogComponent);
     const dialogRef = this.matDialog.open(happenedEditDialogComponent, { data: happened._data });
     const result = await lastValueFrom(dialogRef.afterClosed());
@@ -85,7 +84,7 @@ export class TimelinePageComponent {
     }
   }
 
-  deleteHappened(happened: RxDocument<Happened>) {
+  deleteHappened(happened: HappenedDocument) {
     return happened.remove();
   }
 
