@@ -1,45 +1,8 @@
 <h2 mat-dialog-title>Edit happened</h2>
 <mat-dialog-content>
-    <div class="flex flex-col gap-2 min-w-[400px]">
-        <mat-form-field>
-            <mat-label>Title</mat-label>
-            <input matInput [(ngModel)]="title" cdkFocusInitial />
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>Type</mat-label>
-            <mat-select [(ngModel)]="type">
-                <mat-option value="simple">Simple</mat-option>
-                <mat-option value="rating">Rating</mat-option>
-            </mat-select>
-        </mat-form-field>
-        @if(type() === 'simple'){
-        <mat-form-field>
-            <mat-label>Note</mat-label>
-            <textarea matInput [ngModel]="metadata().note" (ngModelChange)="modifyMetadata('note',$event)"></textarea>
-        </mat-form-field>
-        }
-        @if(type() === 'rating'){
-        <label>Rating</label>
-        <mat-radio-group [ngModel]="metadata().rating" (ngModelChange)="modifyMetadata('rating',$event)">
-            <mat-radio-button [value]="1">
-                <mat-icon>star</mat-icon>
-            </mat-radio-button>
-            <mat-radio-button [value]="2">
-                <mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-            </mat-radio-button>
-            <mat-radio-button [value]="3">
-                <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-            </mat-radio-button>
-            <mat-radio-button [value]="4">
-                <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-            </mat-radio-button>
-            <mat-radio-button [value]="5">
-                <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
-            </mat-radio-button>
-        </mat-radio-group>
-        }
+    <app-template-edit [(template)]="template">
         <app-date-time label="Choose a date" [(date)]="happenedAt" />
-    </div>
+    </app-template-edit>
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-button (click)="close()">Cancel</button>

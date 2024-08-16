@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>Edit happened</h2>
+<mat-dialog-content>
+    <app-template-edit [(template)]="template"></app-template-edit>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="close()">Cancel</button>
+    <button mat-button [mat-dialog-close]="template()">Save</button>
+</mat-dialog-actions>

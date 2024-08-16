@@ -39,6 +39,7 @@ export function isRatingType(input: HappenedTemplate | undefined): input is Happ
 }
 
 export type HappenedTemplate = HappenedSimple | HappenedRating;
+export type HappenedTypes = HappenedTemplate['type'];
 
 export type HappenedTemplateDocument = RxDocument<HappenedTemplate>;
 

@@ -30,7 +30,7 @@ export class TemplatesPageComponent {
       createdAt: new Date().getTime(),
       modifiedAt: new Date().getTime()
     };
-    const templateInfoComponent = await import("../../components/template-info-dialog/template-info-dialog.component").then(x => x.TemplateInfoDialogComponent);
+    const templateInfoComponent = await import("../../components/template-edit-dialog/template-edit-dialog.component").then(x => x.TemplateInfoDialogComponent);
     const dialogRef = this.matDialog.open(templateInfoComponent, { data: newType });
     const result = await lastValueFrom(dialogRef.afterClosed())
     if (result === undefined)
