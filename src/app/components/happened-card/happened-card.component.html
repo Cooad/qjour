@@ -2,6 +2,9 @@
     <mat-expansion-panel-header>
         <mat-panel-title>{{ happened().title }}</mat-panel-title>
     </mat-expansion-panel-header>
+    @if(hasNote(happened())){
+    <p>{{ getNote(happened()) }}</p>
+    }
     <div class="flex flex-row content-end">
         <button mat-icon-button (click)="edit.emit()"><mat-icon>edit</mat-icon></button>
         <button mat-icon-button (click)="delete.emit()"><mat-icon>delete</mat-icon></button>

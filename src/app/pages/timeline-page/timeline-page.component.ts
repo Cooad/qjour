@@ -51,15 +51,25 @@ export class TimelinePageComponent {
 
   async addHappened(templateId: string) {
     const happenedTemplate = this.happenedTemplates().find(t => t.id == templateId);
-    const newHappened: Happened = {
+    const date = new Date().getTime();
+    const base = {
       id: uuid(),
-      createdAt: new Date().getTime(),
-      modifiedAt: new Date().getTime(),
-      happenedAt: new Date().getTime(),
-      title: happenedTemplate?.title ?? '',
-      metadata: happenedTemplate?.metadata ?? {},
-      type: happenedTemplate?.type ?? 'simple'
+      createdAt: date,
+      modifiedAt: date,
+      happenedAt: date
     };
+    const newHappened: Happened = !!happenedTemplate
+      ? {
+        ...happenedTemplate._data,
+        ...base
+      }
+      : {
+        ...base,
+        title: '',
+        type: 'simple',
+        metadata: {}
+      };
+
     await this.databaseService.db.happened.insert(newHappened);
   }
 
@@ -67,7 +77,8 @@ export class TimelinePageComponent {
     const happenedEditDialogComponent = await import("../../components/happened-edit-dialog/happened-edit-dialog.component").then(x => x.HappenedEditDialogComponent);
     const dialogRef = this.matDialog.open(happenedEditDialogComponent, { data: happened._data });
     const result = await lastValueFrom(dialogRef.afterClosed());
-    await happened.patch(result);
+    if (!!result)
+      await happened.patch(result);
   }
 
   deleteHappened(happened: RxDocument<Happened>) {

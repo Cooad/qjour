@@ -1,24 +1,8 @@
 import { MigrationStrategies, RxDocument, RxJsonSchema } from "rxdb";
+import { HappenedTemplate } from "./happened-template";
 
-type Base = {
-  id: string;
-  title: string;
-  happenedAt: number;
-  createdAt: number;
-  modifiedAt: number;
-}
 
-type Simple = {
-  id: string,
-  type: 'simple',
-  metadata: {
-    note?: string;
-  }
-}
-
-export type Happened = Base & Simple;
-
-export type HappenedTypes = Happened['type'];
+export type Happened = HappenedTemplate & { happenedAt: number };
 
 export const happenedMethods = {
 }

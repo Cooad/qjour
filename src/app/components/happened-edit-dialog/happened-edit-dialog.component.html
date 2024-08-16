@@ -6,9 +6,41 @@
             <input matInput [(ngModel)]="title" cdkFocusInitial />
         </mat-form-field>
         <mat-form-field>
+            <mat-label>Type</mat-label>
+            <mat-select [(ngModel)]="type">
+                <mat-option value="simple">Simple</mat-option>
+                <mat-option value="rating">Rating</mat-option>
+            </mat-select>
+        </mat-form-field>
+        @if(type() === 'simple'){
+        <mat-form-field>
+            <mat-label>Note</mat-label>
+            <textarea matInput [ngModel]="metadata().note" (ngModelChange)="modifyMetadata('note',$event)"></textarea>
+        </mat-form-field>
+        }
+        @if(type() === 'rating'){
+        <label>Rating</label>
+        <mat-radio-group [ngModel]="metadata().rating" (ngModelChange)="modifyMetadata('rating',$event)">
+            <mat-radio-button [value]="1">
+                <mat-icon>star</mat-icon>
+            </mat-radio-button>
+            <mat-radio-button [value]="2">
+                <mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+            </mat-radio-button>
+            <mat-radio-button [value]="3">
+                <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+            </mat-radio-button>
+            <mat-radio-button [value]="4">
+                <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+            </mat-radio-button>
+            <mat-radio-button [value]="5">
+                <mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon><mat-icon>star</mat-icon>
+            </mat-radio-button>
+        </mat-radio-group>
+        }
+        <mat-form-field>
             <mat-label>Choose a date</mat-label>
-            <input matInput type="datetime-local" [value]="happenedInput()"
-                (change)="happenedAtChanged($event)" />
+            <input matInput type="datetime-local" [value]="happenedInput()" (change)="happenedAtChanged($event)" />
         </mat-form-field>
     </div>
 </mat-dialog-content>

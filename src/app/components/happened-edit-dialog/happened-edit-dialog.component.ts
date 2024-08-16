@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from '@angular/material/select';
+import { MatRadioModule } from '@angular/material/radio';
 import { Happened } from "../../database/models/happened";
-import { throwIfIsStorageWriteError } from "rxdb";
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
     templateUrl: './happened-edit-dialog.component.html',
@@ -18,6 +20,9 @@ import { throwIfIsStorageWriteError } from "rxdb";
         MatButtonModule,
         MatFormFieldModule,
         MatInputModule,
+        MatSelectModule,
+        MatRadioModule,
+        MatIconModule,
         FormsModule
     ],
     standalone: true
@@ -28,12 +33,16 @@ export class HappenedEditDialogComponent {
 
     title = signal(this.data.title);
     happenedAt = signal(new Date(this.data.happenedAt));
+    type = signal(this.data.type);
+    metadata = signal<any>(this.data.metadata);
 
     happenedInput = computed(() => this.toDateString(this.happenedAt()));
 
-    result = computed(() => ({
+    result: Signal<Happened> = computed(() => ({
         ...this.data,
         title: this.title(),
+        type: this.type(),
+        metadata: this.metadata(),
         happenedAt: this.happenedAt().getTime()
     }));
 
@@ -47,10 +56,14 @@ export class HappenedEditDialogComponent {
         this.happenedAt.set(date);
     }
 
+    modifyMetadata(key: string, value: string | number) {
+        this.metadata.update(m => ({ ...m, [key]: value }));
+    }
+
     private toDateString(date: Date): string {
-        return (date.getFullYear().toString() + '-' 
-           + ("0" + (date.getMonth() + 1)).slice(-2) + '-' 
-           + ("0" + (date.getDate())).slice(-2))
-           + 'T' + date.toTimeString().slice(0,5);
+        return (date.getFullYear().toString() + '-'
+            + ("0" + (date.getMonth() + 1)).slice(-2) + '-'
+            + ("0" + (date.getDate())).slice(-2))
+            + 'T' + date.toTimeString().slice(0, 5);
     }
 }

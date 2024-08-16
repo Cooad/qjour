@@ -1,7 +1,44 @@
 import { RxDocument, RxJsonSchema } from "rxdb";
 import { Happened } from "./happened";
 
-export type HappenedTemplate = Omit<Happened, 'happenedAt'>;
+type Base = {
+  id: string;
+  title: string;
+  createdAt: number;
+  modifiedAt: number;
+}
+
+export type HappenedSimple = {
+  type: 'simple',
+  metadata: {
+    note?: string;
+  }
+} & Base;
+
+export function isSimpleType(input: HappenedTemplate | undefined): input is HappenedSimple {
+  if (!input)
+    return false;
+  if (!input.type)
+    return false;
+  return input.type === 'simple';
+}
+
+export type HappenedRating = {
+  type: 'rating',
+  metadata: {
+    rating: number
+  }
+} & Base;
+
+export function isRatingType(input: HappenedTemplate | undefined): input is HappenedRating {
+  if (!input)
+    return false;
+  if (!input.type)
+    return false;
+  return input.type === 'rating';
+}
+
+export type HappenedTemplate = HappenedSimple | HappenedRating;
 
 export type HappenedTemplateDocument = RxDocument<HappenedTemplate>;
 
