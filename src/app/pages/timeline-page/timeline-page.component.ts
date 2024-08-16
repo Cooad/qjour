@@ -77,8 +77,12 @@ export class TimelinePageComponent {
     const happenedEditDialogComponent = await import("../../components/happened-edit-dialog/happened-edit-dialog.component").then(x => x.HappenedEditDialogComponent);
     const dialogRef = this.matDialog.open(happenedEditDialogComponent, { data: happened._data });
     const result = await lastValueFrom(dialogRef.afterClosed());
-    if (!!result)
-      await happened.patch(result);
+    if (!!result) {
+      await happened.patch({
+        ...result,
+        modifiedAt: new Date().getTime()
+      });
+    }
   }
 
   deleteHappened(happened: RxDocument<Happened>) {
