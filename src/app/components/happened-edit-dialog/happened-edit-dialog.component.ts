@@ -8,6 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { Happened } from "../../database/models/happened";
 import { MatIconModule } from "@angular/material/icon";
+import { DateTimeEditComponent } from "../date-time-edit/date-time-edit.component";
 
 @Component({
     templateUrl: './happened-edit-dialog.component.html',
@@ -23,7 +24,8 @@ import { MatIconModule } from "@angular/material/icon";
         MatSelectModule,
         MatRadioModule,
         MatIconModule,
-        FormsModule
+        FormsModule,
+        DateTimeEditComponent 
     ],
     standalone: true
 })
@@ -35,8 +37,6 @@ export class HappenedEditDialogComponent {
     happenedAt = signal(new Date(this.data.happenedAt));
     type = signal(this.data.type);
     metadata = signal<any>(this.data.metadata);
-
-    happenedInput = computed(() => this.toDateString(this.happenedAt()));
 
     result: Signal<Happened> = computed(() => ({
         ...this.data,
@@ -50,20 +50,7 @@ export class HappenedEditDialogComponent {
         this.dialogRef.close();
     }
 
-    happenedAtChanged(evt: Event) {
-        const dateString = (evt.target! as HTMLInputElement).value;
-        let date = new Date(dateString);
-        this.happenedAt.set(date);
-    }
-
     modifyMetadata(key: string, value: string | number) {
         this.metadata.update(m => ({ ...m, [key]: value }));
-    }
-
-    private toDateString(date: Date): string {
-        return (date.getFullYear().toString() + '-'
-            + ("0" + (date.getMonth() + 1)).slice(-2) + '-'
-            + ("0" + (date.getDate())).slice(-2))
-            + 'T' + date.toTimeString().slice(0, 5);
     }
 }
